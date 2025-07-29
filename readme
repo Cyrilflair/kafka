@@ -1,0 +1,117 @@
+docker-compose up -d :
+# Starts all services defined in docker-compose.yml in detached (background) mode
+
+docker ps -a :
+# Lists all containers (running, stopped, and exited) on your system
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic testtopic1 --partitions 2 --replication-factor 1 : 
+# Creates a Kafka topic named testtopic1 with 2 partitions and replication factor of 1 using the broker at localhost:9092
+
+kafka-topics --bootstrap-server localhost:9092 --create --topic testtopic2 --partitions 3 --replication-factor 1 : 
+# Creates a Kafka topic named testtopic2 with 3 partitions and a replication factor of 1 using the broker at localhost:9092
+
+kafka-topics --bootstrap-server localhost:9092 --list : 
+# Lists all Kafka topics available on the broker at localhost:9092
+
+kafka-console-producer --bootstrap-server localhost:9092 --topic testtopic1 : 
+# Starts a Kafka producer to send messages to the topic testtopic1 on the broker at localhost:9092
+
+kafka-console-consumer --bootstrap-server localhost:9092 --topic testtopic1 --from-beginning : 
+# Starts a Kafka console consumer that reads all messages from the beginning of the testtopic1 topic on localhost:9092
+
+Prometheus :
+Prometheus URL: http://localhost:9090/targets?search= 
+
+Grafana :
+Grafana URL : http://localhost:3000/
+
+# Go to Dashboards in New click Import and paste the ID 11962 and Load then selet Prometheus and import
+# Now we can see the brokers and topics in Grafana
+
+docker-compose down :
+# To the service in the Docker 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+List topics:
+kafka-topics --bootstrap-server localhost:9092 --list
+create topic:
+kafka-topics --bootstrap-server localhost:9092 --create --topic testnew --partitions 3 --replication-factor 1
+describe topic:
+kafka-topics --bootstrap-server localhost:9092 --describe --topic testnew
+delete topics:
+kafka-topics --bootstrap-server localhost:9092 --delete --topic testnew
+
+produce records:
+kafka-console-producer --bootstrap-server localhost:9092 --topic testnew
+
+consume records:
+kafka-console-consumer --bootstrap-server localhost:9092 --topic testnew --from-beginning
+kafka-consumer-groups  --bootstrap-server localhost:9092 --list
+kafka-consumer-groups  --bootstrap-server localhost:9092 --describe --group  _confluent-controlcenter-7-5-0-1
+
+get offset details:
+kafka-run-class  kafka.tools.GetOffsetShell --broker-list   localhost:9092 --topic testnew
+
+get details of broker:
+kafka-broker-api-versions --bootstrap-server localhost:9092
+kafka-configs --bootstrap-server localhost:9092 --entity-type brokers --entity-name 1 --describe
+
+schema registry:
+------------------
+curl http://localhost:8081/subjects
+curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+    --data '{"schema": "{\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"age\",\"type\":\"int\"},{\"name\":\"email\",\"type\":\"string\"}]}"}' \
+    http://localhost:8081/subjects/user-value/versions
+
+curl http://localhost:8081/subjects/user-value/versions
+
+curl http://localhost:8081/subjects/user-value/versions/1
+
+kafka-avro-console-producer --broker-list localhost:9092 --topic testnew --property schema.registry.url=http://localhost:8081 --property value.schema='{"type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":"int"},{"name":"email","type":"string"}]}'
+kafka-avro-console-consumer --bootstrap-server localhost:9092 --topic testnew --from-beginning --property schema.registry.url=http://localhost:8081
